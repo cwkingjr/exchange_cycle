@@ -14,7 +14,6 @@ def has_valid_hamiltonian_path(groups: List[List[str]]) -> bool:
       group_lengths = [len(x) for x in groups]
       two_times_largest_group = 2 * max(group_lengths)
       participant_count = sum(group_lengths)
-      # TODO what's the source/explanation for this formula?
       return two_times_largest_group <= participant_count
 
 
@@ -23,7 +22,7 @@ def find_random_hamiltonian_path(groups: List[List[str]]) -> List[str]:
     group_lengths = [len(x) for x in groups]
     participant_count = sum(group_lengths)
 
-    groups_by_size: Dict[int, List[str]] = defaultdict(list)
+    groups_by_size: Dict[int, List[List[str]]] = defaultdict(list)
     for group in groups:
         groups_by_size[len(group)].append(group)
 
@@ -62,10 +61,10 @@ def find_random_hamiltonian_path(groups: List[List[str]]) -> List[str]:
     return path
 
 
-def is_path_a_circuit(mypath: List[str]) -> bool:
+def is_path_a_cycle(mypath: List[str]) -> bool:
     """Determines if the head and tail are from the same group"""
     if mypath[0][0] != mypath[-1][0]:
-          return True
+        return True
     return False
 
 
@@ -74,7 +73,8 @@ def is_valid_path(mypath: List[str]) -> bool:
     previous_participant = '  '
     for participant in mypath:
         if participant[0] == previous_participant[0]:
-              return False
+            return False
+        previous_participant = participant
     return True
 
 
@@ -83,21 +83,22 @@ def main():
 
     ITERATIONS = 100000
 
-    circuit_count: int = 0
-    non_circuit_count: int = 0
+    cycle_count: int = 0
+    non_cycle_count: int = 0
 
     valid_path_count: int = 0
     invalid_path_count: int = 0
 
-    circuits: List[str] = []
+    cycles: List[str] = []
 
     groups = [
         ['A1', 'A2', 'A3', 'A4'],
         ['B1', 'B2', 'B3'],
         ['C1'],
-        ['D1', 'D2', 'D3', 'D4'],
+        ['D1', 'D2', 'D3', 'D4', 'D5'],
         ['E1'],
-        ['F1']
+        ['F1'],
+        ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7'],
     ]
 
     if has_valid_hamiltonian_path(groups):  
@@ -110,24 +111,42 @@ def main():
             else:
                 invalid_path_count += 1
 
-            if is_path_a_circuit(path):
-                circuit_count += 1
-                circuits.append(''.join(path))
-                # print(f'circuit: {path}')
+            if is_path_a_cycle(path):
+                cycle_count += 1
+                cycles.append(''.join(path))
+                # print(f'cycle: {path}')
             else:
-                non_circuit_count += 1
-                # print(f'non-circuit: {path}')
+                non_cycle_count += 1
+                # print(f'non-cycle: {path}')
     else:
-      print("No valid hamiltonian path exists")
+        print("No valid hamiltonian path exists")
 
-    print(f'circuits: {circuit_count}')
-    print(f'non-circuits: {non_circuit_count}')
+    print(f'cycles: {cycle_count}')
+    print(f'non-cycles: {non_cycle_count}')
     print(f'valid path count: {valid_path_count}')
     print(f'invalid path count: {invalid_path_count}')
 
-    most_common_circuits = Counter(circuits).most_common(10)
-    print(f'most common circuits: {most_common_circuits}')
+    most_common_cycles = Counter(cycles).most_common(10)
+    print(f'10 most common cycles:')
+    for i in most_common_cycles:
+        print(i)
 
+    alpha = 'ABCDEFG'
+    group_sizes = zip(alpha, [len(x) for x in groups])
+
+    group_info: Dict[str, List[int]] = defaultdict(list)
+    for i in group_sizes:
+        group_info[i[0]].append(i[1])
+
+    starters = [x[0] for x in cycles]
+    starter_count = Counter(starters)
+    # counter does not return zero counts
+    for key in alpha:
+        group_info[key].append(starter_count[key] or 0)
+
+    print('group group-size group-starts')
+    for i in group_info:
+        print(f'{i:5} {group_info[i][0]:5} {group_info[i][1]:10}')
 
 if __name__ == '__main__':
     main()
