@@ -2,8 +2,8 @@
 """
 Runs stats on hamilton path/cycle generation
 """
-import random
 import numpy
+import random
 
 from collections import Counter, defaultdict
 from copy import deepcopy
@@ -88,7 +88,7 @@ def standardize_path_start(path: List[str]) -> List[str]:
 def main():
     """Run several tests and dump the stats"""
 
-    ITERATIONS = 100000
+    ITERATIONS = 1000
 
     cycle_count: int = 0
     non_cycle_count: int = 0
@@ -126,27 +126,11 @@ def main():
     print(f'cycles: {cycle_count}')
     print(f'non-cycles: {non_cycle_count}')
 
-    most_common_cycles = Counter(cycles).most_common(10)
-    print(f'10 most common cycles:')
+    most_common_cycles = Counter(cycles).most_common(15)
+    print(f'15 most common A1-shifted cycles:')
     for i in most_common_cycles:
         print(i)
 
-    alpha = 'ABCDEFG'
-    group_sizes = zip(alpha, [len(x) for x in groups])
-
-    group_info: Dict[str, List[int]] = defaultdict(list)
-    for i in group_sizes:
-        group_info[i[0]].append(i[1])
-
-    starters = [x[0] for x in cycles]
-    starter_count = Counter(starters)
-    # counter does not return zero counts
-    for key in alpha:
-        group_info[key].append(starter_count[key] or 0)
-
-    print('group group-size group-starts')
-    for i in group_info:
-        print(f'{i:5} {group_info[i][0]:5} {group_info[i][1]:10}')
 
 if __name__ == '__main__':
     main()
