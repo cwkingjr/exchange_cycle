@@ -3,6 +3,7 @@
 Runs stats on hamilton path/cycle generation
 """
 import random
+import numpy
 
 from collections import Counter, defaultdict
 from copy import deepcopy
@@ -58,7 +59,7 @@ def find_random_hamiltonian_path(groups: List[List[str]]) -> List[str]:
 
         previous_group = current_group
 
-    return path
+    return standardize_path_start(path)
 
 
 def is_path_a_cycle(mypath: List[str]) -> bool:
@@ -76,6 +77,12 @@ def is_valid_path(mypath: List[str]) -> bool:
             return False
         previous_participant = participant
     return True
+
+
+# Shift the path so that A1 is in the first position
+def standardize_path_start(path: List[str]) -> List[str]:
+    a1_index = path.index('A1')
+    return list(numpy.roll(path, -1 * a1_index))
 
 
 def main():
