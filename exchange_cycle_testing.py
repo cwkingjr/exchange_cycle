@@ -93,6 +93,9 @@ def main():
     cycle_count: int = 0
     non_cycle_count: int = 0
 
+    valid_path_count: int = 0
+    invalid_path_count: int = 0
+
     cycles: List[str] = []
 
     groups = [
@@ -112,6 +115,11 @@ def main():
 
             path = find_random_hamiltonian_path(mygroups)
 
+            if is_valid_path(path):
+                valid_path_count += 1
+            else:
+                invalid_path_count += 1
+
             if is_path_a_cycle(path):
                 cycle_count += 1
                 cycles.append('-'.join(path))
@@ -124,6 +132,9 @@ def main():
 
     print(f'cycles: {cycle_count}')
     print(f'non-cycles: {non_cycle_count}')
+
+    print(f'valid path count: {valid_path_count}')
+    print(f'invalid path count: {invalid_path_count}')
 
     most_common_cycles = Counter(cycles).most_common(10)
     print(f'10 most common cycles:')
