@@ -59,7 +59,7 @@ def find_random_hamiltonian_path(groups: List[List[str]]) -> List[str]:
 
         previous_group = current_group
 
-    return standardize_path_start(path)
+    return path
 
 
 def is_path_a_cycle(mypath: List[str]) -> bool:
@@ -114,8 +114,9 @@ def main():
 
             if is_path_a_cycle(path):
                 cycle_count += 1
-                cycles.append('-'.join(path))
-                # print(f'cycle: {path}')
+                shifted_path = standardize_path_start(path)
+                cycles.append('-'.join(shifted_path))
+                # print(f'cycle: {shifted_path}')
             else:
                 non_cycle_count += 1
                 # print(f'non-cycle: {path}')
